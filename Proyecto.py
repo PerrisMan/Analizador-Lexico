@@ -1,9 +1,24 @@
 import sys
 
-#Asigna los tokens
-def tokens(cadena):
+#Imprimir tokens
+def printf():
     
     return
+
+
+#Palabras reservadas
+def reservadas(cadena):
+    return cadena in ['for','fun','','','']
+
+#Tipo de dato
+def tipo(cadena):
+    return cadena in ['entero','flotante','string','caracter']
+
+#Asigna los tokens
+def tipotokens(cadena):
+    typeT = []
+    
+    return typeT
 
 #Categorias
 def comillas(caracter):
@@ -74,6 +89,11 @@ def separador(cadena):
             tokens.append("".join(tokenaux))
             tokens += c
             tokenaux.clear()
+        elif letras(c) and estado == 2:
+            estado = 1
+            tokens.append("".join(tokenaux))
+            tokenaux.clear()
+            tokenaux += c
         #Estado 3 - Cadenas
         elif not(comillas(c)) and estado == 3:
             tokenaux += c
