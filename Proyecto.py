@@ -8,7 +8,8 @@ def printf():
 
 #Palabras reservadas
 def reservadas(cadena):
-    return cadena in ['for','fun','','','']
+    return cadena in ['for','fun','false','if','null', 'print','return', 'true'
+                      'var', 'else','or','None','try','not','break']
 
 #Tipo de dato
 def tipovar(cadena):
