@@ -11,13 +11,13 @@ def reservadas(cadena):
     return cadena in ['for','fun','','','']
 
 #Tipo de dato
-def tipo(cadena):
+def tipovar(cadena):
     return cadena in ['entero','flotante','string','caracter']
 
 #Asigna los tokens
 def tipotokens(cadena):
     typeT = []
-    
+
     return typeT
 
 #Categorias
@@ -174,7 +174,8 @@ def remove(cadena):
 def lexico(cadena):
     cad = remove(cadena)
     sep = separador(cad)
-    print(sep)
+    ttokens = tipotokens(sep)
+    print(ttokens)
     return 
 
 #Transforma archivo txt a cadena
