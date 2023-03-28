@@ -8,14 +8,16 @@ def printf():
 
 #Palabras reservadas
 def reservadas(cadena):
-    return cadena in ['for','fun','false','if','null', 'print','return', 'true'
-                      'var', 'else','or','None','try','not','break']
+    palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 'true':'TRUE',
+                'var':'VARIABLE', 'else':'ELSE','or':'OR','None':'NONE','try':'TRY','not':'NOT','break':'BREAK', 'and':'AND'}
+
 
 #Tipo de dato
 def tipovar(cadena):
     return cadena in ['entero','flotante','string','caracter']
 
 #Asigna los tokens
+#ttokens = tipotokens(sep)
 def tipotokens(cadena):
     typeT = []
 
@@ -48,7 +50,7 @@ def separador(cadena):
     tokens = []
     tokenaux = []
     listado = []
-    #Separa letras(cadenas), numeros, operadores y espacios
+    #Separa letras(cadenas), numeros, operadores, espacios, palabras reservadas
     for c in cadena:
         #Estado 0 - Inicio
         if letras(c) and estado == 0:
