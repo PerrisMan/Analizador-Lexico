@@ -42,7 +42,7 @@ def Identificador(cadena):
 #Categorias
 def comillas(caracter):
     return caracter in "\""
-def operadores(caracter):
+def simbolos(caracter):
     return caracter in "(){}[],.:;-+*/!=<>%&"
 def espacios(caracter):
     return caracter in " \n\t"
@@ -50,7 +50,8 @@ def letras(caracter):
     return caracter in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX_"
 def numeros(caracter):
     return caracter in "1234567890"
-
+def operadores(caracter):
+    return caracter in "!=<>+-"
 
 #Comprueba que sea numero
 def compnum(cadena):
@@ -79,14 +80,14 @@ def separador(cadena):
         elif comillas(c) and estado == 0:
             estado = 3
             tokenaux += c
-        elif operadores(c) and estado == 0:
+        elif simbolos(c) and estado == 0:
             tokens += c
         elif espacios(c) and estado == 0:
             tokens += c
         #Estado 1 - Letras
         elif (letras(c) or numeros(c)) and estado == 1:
             tokenaux += c
-        elif operadores(c) and estado == 1:
+        elif simbolos(c) and estado == 1:
             estado = 0
             tokens.append("".join(tokenaux))
             tokens += c
@@ -99,7 +100,7 @@ def separador(cadena):
         #Estado 2 - Números
         elif numeros(c) and estado == 2:
             tokenaux += c
-        elif operadores(c) and estado == 2:
+        elif simbolos(c) and estado == 2:
             estado = 0
             tokens.append("".join(tokenaux))
             tokens += c
@@ -125,7 +126,7 @@ def separador(cadena):
 
     #Junta los operadores: "<=" ">=" "==" "!="
     for i in range(len(tokens)):
-        if tokens[i] in "<>=!+-" and tokens[i+1] == "=":
+        if operadores(tokens[i]) and tokens[i+1] == "=":
             tokenaux += tokens[i]
             tokenaux += tokens[i+1]
             tokens[i] = "".join(tokenaux)
