@@ -10,9 +10,10 @@ def printf(cadena):
 def reservadas(cadena):
     palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 'true':'TRUE',
                 'var':'VARIABLE', 'else':'ELSE','or':'OR','None':'NONE','try':'TRY','not':'NOT','break':'BREAK', 'and':'AND'}
-    if palabrasHM(cadena)!=None:
-        return palabrasHM(cadena)
-    return False
+    if cadena in palabrasHM :
+        return palabrasHM[cadena]
+    else: 
+        return False
 
     
 
@@ -25,8 +26,8 @@ def tipovar(cadena):
 def PalRe(cadena):
     tokens=[]
     for cad in cadena:
-        if(tipotokens(cad))!=False:
-            tokens.append(tipotokens(cad))   
+        if(reservadas(cad))!=False:
+            tokens.append(reservadas(cad))   
     return tokens
 
 #Asigna los tokens
@@ -191,7 +192,7 @@ def remove(cadena):
 def lexico(cadena):
     cad = remove(cadena)
     sep = separador(cad)
-    ttokens = tipotokens(sep)
+    ttokens = PalRe(sep)
     print(ttokens)
     return 
 
