@@ -1,4 +1,5 @@
 import sys
+import os
 
 #Imprime tokens
 def imprimeTokens(cadenas, tokens):
@@ -231,6 +232,8 @@ def lexico(cadena):
 
 #Transforma archivo txt a cadena
 def transforma(archivo):
+    if  not os.path.exists(archivo):
+        return False
     arch = open(archivo, "r")
     cadena = []
     for linea in arch: 
@@ -241,15 +244,12 @@ def transforma(archivo):
 
 # Main==================================================================
 
-#Si existe un archivo
-if len(sys.argv) > 1:
+#Comprueba si los parametros estasn correctos
+if len(sys.argv) == 2:
     cadena = transforma(sys.argv[1])
-    lexico(cadena)
-#Desde la terminal
-elif len(sys.argv) == 1:
-    while(1):
-        cadena = input(">>> ")
-        if cadena != "exit":
-            lexico(cadena)
-        else:
-            break
+    if (not cadena):
+        print("Error al leer el archivo. No existe. Error 404")
+    else :
+        lexico(cadena)
+else:
+    print("El uso correcto es el siguiente: [py] [nombre programa] [nombre archivo a modificar]")
