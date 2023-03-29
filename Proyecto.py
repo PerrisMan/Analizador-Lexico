@@ -1,7 +1,7 @@
 import sys
 
 #Imprimir tokens
-def printf():
+def printf(cadena):
     
     return
 
@@ -10,18 +10,31 @@ def printf():
 def reservadas(cadena):
     palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 'true':'TRUE',
                 'var':'VARIABLE', 'else':'ELSE','or':'OR','None':'NONE','try':'TRY','not':'NOT','break':'BREAK', 'and':'AND'}
+    if palabrasHM(cadena)!=None:
+        return palabrasHM(cadena)
+    return False
 
+    
 
 #Tipo de dato
 def tipovar(cadena):
     return cadena in ['entero','flotante','string','caracter']
 
+
+#Asignar palabras reservadas en tokens
+def PalRe(cadena):
+    tokens=[]
+    for cad in cadena:
+        if(tipotokens(cad))!=False:
+            tokens.append(tipotokens(cad))   
+    return tokens
+
 #Asigna los tokens
 #ttokens = tipotokens(sep)
 def tipotokens(cadena):
-    typeT = []
-
-    return typeT
+    typeT = ['letras', 'comillas', 'operadores', 'espacios', 'numeros','palabrasHM']
+    for tipotokens in typeT:
+        return typeT
 
 #Categorias
 def comillas(caracter):
@@ -34,6 +47,7 @@ def letras(caracter):
     return caracter in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX_"
 def numeros(caracter):
     return caracter in "1234567890"
+
 
 #Comprueba que sea numero
 def compnum(cadena):
