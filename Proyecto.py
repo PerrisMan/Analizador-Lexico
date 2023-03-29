@@ -10,8 +10,9 @@ def compfloat(cadena):
 #Palabras reservadas
 def reservadas(cadena):
     palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 
-                'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE','or':'OR','None':'NONE','try':'TRY','not':'NOT',
-                'break':'BREAK', 'and':'AND','identificador':'IDENTIFICADOR', 'float':'FLOAT','int':'INT'}
+                'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE','or':'OR','none':'NONE','try':'TRY','not':'NOT',
+                'break':'BREAK', 'and':'AND','identificador':'IDENTIFICADOR', 'float':'FLOAT','int':'INT', 
+                'operadores': 'OPERADORES', 'char':'CHAR', 'string':'STRING'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -31,7 +32,17 @@ def PalRe(cadena):
                 tokens.append(reservadas('float'))
             else:
                 tokens.append(reservadas('int'))
+        elif(operadores(cad[0])):
+            tokens.append(reservadas('operadores'))
+        elif(comillas(cad[0])):
+            if(len(cad)>3):
+                tokens.append(reservadas('string'))
+            else:
+                tokens.append(reservadas('char'))
+        else:
+            tokens.append(reservadas(cad))
     return tokens
+
 
 
 #Identificador
@@ -154,6 +165,13 @@ def separador(cadena):
         num -= cont
         tokens.pop(num)
         cont += 1
+    #elimina espacios
+    cont=0
+    for i in range(len(tokens)):
+        if tokens[i]==' ':
+            cont+=1
+    for J in range(cont):
+        tokens.remove(' ')
 
     return tokens
 
