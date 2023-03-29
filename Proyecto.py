@@ -19,8 +19,11 @@ def reservadas(cadena):
     palabrasHM = {'for':'FOR', 'fun':'FUNCION', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
                 'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE', 'or':'OR', 'none':'NONE', 'try':'TRY',
                 'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'IDENTIFICADOR', 'float':'FLOAT',
-                'int':'INT', 'operador':'OPERADOR', 'char':'CHAR', 'string':'STRING', 'operacion':'OPEREACION',
-                'llaves':'LLAVES'}
+                'int':'INT', 'char':'CHAR', 'string':'STRING','llaves':'LLAVES', '=':'IGUAL',
+                '+':'SUMA','-':'RESTA','/':'DIVISION','*':'MULTIPLICACION','+=':'SUMAIGUAL',
+                '<=':'MENORIGUAL', '>=':'MAYORIGUAL','==':'IGUALDAD','!=':'DISTINTO', '<':'MENORQUE', '>':'MAYORQUE',
+                '-=':'RESTAIGUAL','{':'LLAVEABRE','}':'LLAVECIERRA','[':'CORCHETEABRE',']':'CORCHETECIERRA',
+                '(':'PARENTESISABRE',')':'PARENTESISCIERRA'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -35,22 +38,18 @@ def PalRe(cadena):
             tokens.append(reservadas(cad)) 
         elif (letras(cad[0])):
             tokens.append(reservadas('identificador'))
+        #Tipo de número
         elif(numeros(cad[0])):
             if(compfloat(cad)):
                 tokens.append(reservadas('float'))
             else:
                 tokens.append(reservadas('int'))
-        elif(operadores(cad)):
-            tokens.append(reservadas('operador'))
-        elif(operaciones(cad[0])):
-            tokens.append(reservadas('operacion'))
+        #Tipo de dato
         elif(comillas(cad[0])):
             if(len(cad)>3):
                 tokens.append(reservadas('string'))
             else:
                 tokens.append(reservadas('char'))
-        elif(llaves(cad)):
-            tokens.append(reservadas('llaves'))
         else:
             tokens.append(reservadas(cad))
             
