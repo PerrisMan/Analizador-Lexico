@@ -1,41 +1,43 @@
 import sys
 
-#Imprimir tokens
-def printf(cadena):
-    
-    return
-
+#Comprueba si es un numero flotante
+def compfloat(cadena):
+    for c in cadena:
+        if c == '.':
+            return True 
+    return False
 
 #Palabras reservadas
 def reservadas(cadena):
-    palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 'true':'TRUE',
-                'var':'VARIABLE', 'else':'ELSE','or':'OR','None':'NONE','try':'TRY','not':'NOT','break':'BREAK', 'and':'AND'}
+    palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 
+                'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE','or':'OR','None':'NONE','try':'TRY','not':'NOT',
+                'break':'BREAK', 'and':'AND','identificador':'IDENTIFICADOR', 'float':'FLOAT','int':'INT'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
         return False
-
-    
-
-#Tipo de dato
-def tipovar(cadena):
-    return cadena in ['entero','flotante','string','caracter']
-
+  
 
 #Asignar palabras reservadas en tokens
 def PalRe(cadena):
     tokens=[]
     for cad in cadena:
         if(reservadas(cad))!=False:
-            tokens.append(reservadas(cad))   
+            tokens.append(reservadas(cad)) 
+        elif (letras(cad[0])):
+            tokens.append(reservadas('identificador'))
+        elif(numeros(cad[0])):
+            if(compfloat(cad)):
+                tokens.append(reservadas('float'))
+            else:
+                tokens.append(reservadas('int'))
     return tokens
 
-#Asigna los tokens
-#ttokens = tipotokens(sep)
-def tipotokens(cadena):
-    typeT = ['letras', 'comillas', 'operadores', 'espacios', 'numeros','palabrasHM']
-    for tipotokens in typeT:
-        return typeT
+
+#Identificador
+def Identificador(cadena):
+    return
+
 
 #Categorias
 def comillas(caracter):
