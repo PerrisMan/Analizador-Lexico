@@ -1,5 +1,11 @@
 import sys
 
+#Imprime tokens
+def imprimeTokens(cadenas, tokens):
+    for i in range(len(cadenas)):
+        print(f'\'{cadenas[i]}\' ====> {tokens[i]}')
+    return
+
 #Comprueba si es un numero flotante
 def compfloat(cadena):
     for c in cadena:
@@ -9,10 +15,11 @@ def compfloat(cadena):
 
 #Palabras reservadas
 def reservadas(cadena):
-    palabrasHM = {'for':'FOR','fun':'FUNCION','false':'FALSE','if':'IF', 'print':'PRINT','return':'RETURN', 
-                'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE','or':'OR','none':'NONE','try':'TRY','not':'NOT',
-                'break':'BREAK', 'and':'AND','identificador':'IDENTIFICADOR', 'float':'FLOAT','int':'INT', 
-                'operadores': 'OPERADORES', 'char':'CHAR', 'string':'STRING'}
+    palabrasHM = {'for':'FOR', 'fun':'FUNCION', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
+                'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE', 'or':'OR', 'none':'NONE', 'try':'TRY',
+                'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'IDENTIFICADOR', 'float':'FLOAT',
+                'int':'INT', 'operador':'OPERADOR', 'char':'CHAR', 'string':'STRING', 'operacion':'OPEREACION',
+                'llaves':'LLAVES'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -32,22 +39,21 @@ def PalRe(cadena):
                 tokens.append(reservadas('float'))
             else:
                 tokens.append(reservadas('int'))
-        elif(operadores(cad[0])):
-            tokens.append(reservadas('operadores'))
+        elif(operadores(cad)):
+            tokens.append(reservadas('operador'))
+        elif(operaciones(cad[0])):
+            tokens.append(reservadas('operacion'))
         elif(comillas(cad[0])):
             if(len(cad)>3):
                 tokens.append(reservadas('string'))
             else:
                 tokens.append(reservadas('char'))
+        elif(llaves(cad)):
+            tokens.append(reservadas('llaves'))
         else:
             tokens.append(reservadas(cad))
+            
     return tokens
-
-
-
-#Identificador
-def Identificador(cadena):
-    return
 
 
 #Categorias
@@ -62,7 +68,11 @@ def letras(caracter):
 def numeros(caracter):
     return caracter in "1234567890"
 def operadores(caracter):
-    return caracter in "!=<>+-"
+    return caracter in ["!=", "==", "<=", ">="]
+def operaciones(caracter):
+    return caracter in "/=+-*"
+def llaves(caracter):
+    return caracter in "{[()]}"
 
 #Comprueba que sea numero
 def compnum(cadena):
@@ -134,16 +144,18 @@ def separador(cadena):
             tokenaux += c
             tokens.append("".join(tokenaux))
             tokenaux.clear()
+    tokenaux.clear()
 
-    #Junta los operadores: "<=" ">=" "==" "!="
+    #Junta los operadores: "<=" ">=" "==" "!=" "+="
     for i in range(len(tokens)):
-        if operadores(tokens[i]) and tokens[i+1] == "=":
+        if (tokens[i] in "!=+-<>") and tokens[i+1] == "=":
             tokenaux += tokens[i]
             tokenaux += tokens[i+1]
             tokens[i] = "".join(tokenaux)
             tokens[i+1] = ""
             listado.append(i+1)
             tokenaux.clear()
+    tokenaux.clear()
 
     #Junta los numeros flotantes
     for i in range(len(tokens)):
@@ -157,6 +169,7 @@ def separador(cadena):
             listado.append(i+1)
             listado.append(i+2)
             tokenaux.clear()
+    tokenaux.clear()
 
     #Elimina los datos sobrados
     listado.sort()
@@ -165,12 +178,12 @@ def separador(cadena):
         num -= cont
         tokens.pop(num)
         cont += 1
-    #elimina espacios
+    #Elimina espacios
     cont=0
     for i in range(len(tokens)):
         if tokens[i]==' ':
             cont+=1
-    for J in range(cont):
+    for j in range(cont):
         tokens.remove(' ')
 
     return tokens
@@ -214,8 +227,7 @@ def lexico(cadena):
     cad = remove(cadena)
     sep = separador(cad)
     ttokens = PalRe(sep)
-    print(ttokens)
-    return 
+    imprimeTokens(sep, ttokens)
 
 #Transforma archivo txt a cadena
 def transforma(archivo):
