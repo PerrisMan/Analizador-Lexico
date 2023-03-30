@@ -1,10 +1,29 @@
 import sys
 import os
 
+#Quita comillas
+def convCadena(cadena):
+        newPala = []
+        for c in cadena:
+            if c != "\"":
+                newPala += c
+        return "".join(newPala)
+
 #Imprime tokens
 def imprimeTokens(cadenas, tokens):
     for i in range(len(cadenas)):
-        print(f'\'{cadenas[i]}\' ====> {tokens[i]}')
+        #Para floats
+        if tokens[i] == 'FLOAT':
+            print(f'Token: {tokens[i]}, Lexema: {cadenas[i]}, Valor: {float(cadenas[i])}')
+        #Para enteros
+        elif tokens[i] == 'INT':
+            print(f'Token: {tokens[i]}, Lexema: {cadenas[i]}, Valor: {int(cadenas[i])}')
+        #Para cadenas
+        elif tokens[i] == 'STRING':
+            print(f'Token: {tokens[i]}, Lexema: {cadenas[i]}, Valor: {str(convCadena(cadenas[i]))}')
+        #Para los otros
+        elif cadenas[i] != '\n':
+            print(f'Token: {tokens[i]}, Lexema: {cadenas[i]}')
     return
 
 #Comprueba si es un numero flotante
@@ -19,7 +38,7 @@ def reservadas(cadena):
     palabrasHM = {'for':'FOR', 'fun':'FUNCION', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
                 'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE', 'or':'OR', 'none':'NONE', 'try':'TRY',
                 'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'IDENTIFICADOR', 'float':'FLOAT',
-                'int':'INT', 'char':'CHAR', 'string':'STRING','llaves':'LLAVES', '=':'IGUAL',
+                'int':'INT', 'string':'STRING','llaves':'LLAVES', '=':'IGUAL',
                 '+':'SUMA','-':'RESTA','/':'DIVISION','*':'MULTIPLICACION','+=':'SUMAIGUAL',
                 '<=':'MENORIGUAL', '>=':'MAYORIGUAL','==':'IGUALDAD','!=':'DISTINTO', '<':'MENORQUE', '>':'MAYORQUE',
                 '-=':'RESTAIGUAL','{':'LLAVEABRE','}':'LLAVECIERRA','[':'CORCHETEABRE',']':'CORCHETECIERRA',
@@ -46,10 +65,10 @@ def PalRe(cadena):
                 tokens.append(reservadas('int'))
         #Tipo de dato
         elif(comillas(cad[0])):
-            if(len(cad)>3):
+            if(len(cad)>2):
                 tokens.append(reservadas('string'))
             else:
-                tokens.append(reservadas('char'))
+                tokens.append(reservadas(cad))
         else:
             tokens.append(reservadas(cad))
             
@@ -216,6 +235,8 @@ def remove(cadena):
         elif estado == 3 and c == '*':
             estado = 4
         #estado 4
+        elif estado == 4 and c == '*':
+            estado = 4 
         elif estado == 4 and c == '/':
             estado = 0
         elif estado == 4 and c != '/':
