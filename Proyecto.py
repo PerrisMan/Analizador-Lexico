@@ -58,7 +58,7 @@ def reservadas(cadena):
                 '+':'SUMA','-':'RESTA','/':'DIVISION','*':'MULTIPLICACION','+=':'SUMAIGUAL',
                 '<=':'MENORIGUAL', '>=':'MAYORIGUAL','==':'IGUALDAD','!=':'DISTINTO', '<':'MENORQUE', '>':'MAYORQUE',
                 '-=':'RESTAIGUAL','{':'LLAVEABRE','}':'LLAVECIERRA','[':'CORCHETEABRE',']':'CORCHETECIERRA',
-                '(':'PARENTESISABRE',')':'PARENTESISCIERRA',';':'PUNTOYCOMA'}
+                '(':'PARENTESISABRE',')':'PARENTESISCIERRA',';':'PUNTOYCOMA','.':'PUNTO',',':'COMA'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -143,6 +143,11 @@ def separador(cadena):
         #Estado 1 - Letras
         elif (letras(c) or numeros(c)) and estado == 1:
             tokenaux += c
+        elif comillas(c) and estado == 1:
+            estado = 3
+            tokens.append("".join(tokenaux))
+            tokenaux.clear()
+            tokenaux += c
         elif simbolos(c) and estado == 1:
             estado = 0
             tokens.append("".join(tokenaux))
@@ -155,6 +160,11 @@ def separador(cadena):
             tokenaux.clear()
         #Estado 2 - Números
         elif numeros(c) and estado == 2:
+            tokenaux += c
+        elif comillas(c) and estado == 2:
+            estado = 3
+            tokens.append("".join(tokenaux))
+            tokenaux.clear()
             tokenaux += c
         elif simbolos(c) and estado == 2:
             estado = 0
@@ -218,9 +228,10 @@ def separador(cadena):
             listado.append(i+1)
             listado.append(i+2)
             compru = 2
-            tokenaux.clear()
-        
+            tokenaux.clear()        
     tokenaux.clear()
+
+    print (tokens)
 
     #Elimina los datos sobrados
     listado.sort()
