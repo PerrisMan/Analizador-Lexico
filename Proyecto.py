@@ -1,6 +1,22 @@
 import sys
 import os
 
+#######################################
+#####                             #####
+#####    Analizador sintáctico    #####
+#####                             #####
+#######################################
+
+
+
+
+
+###################################
+#####                         #####
+#####    Analizador léxico    #####
+#####                         #####
+###################################
+
 #Quita comillas
 def convCadena(cadena):
         newPala = []
@@ -42,7 +58,7 @@ def reservadas(cadena):
                 '+':'SUMA','-':'RESTA','/':'DIVISION','*':'MULTIPLICACION','+=':'SUMAIGUAL',
                 '<=':'MENORIGUAL', '>=':'MAYORIGUAL','==':'IGUALDAD','!=':'DISTINTO', '<':'MENORQUE', '>':'MAYORQUE',
                 '-=':'RESTAIGUAL','{':'LLAVEABRE','}':'LLAVECIERRA','[':'CORCHETEABRE',']':'CORCHETECIERRA',
-                '(':'PARENTESISABRE',')':'PARENTESISCIERRA'}
+                '(':'PARENTESISABRE',')':'PARENTESISCIERRA',';':'PUNTOYCOMA'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -58,7 +74,7 @@ def PalRe(cadena):
         elif (letras(cad[0])):
             tokens.append(reservadas('identificador'))
         #Tipo de número
-        elif(numeros(cad[0])):
+        elif(numeros(cad[0]) or cad[0] == '.'):
             if(compfloat(cad)):
                 tokens.append(reservadas('float'))
             else:
@@ -163,6 +179,9 @@ def separador(cadena):
             tokenaux += c
             tokens.append("".join(tokenaux))
             tokenaux.clear()
+    if estado == 3:
+        print("Error léxico, una cadena no fue terminanda")
+        sys.exit(1)
     tokenaux.clear()
 
     #Junta los operadores: "<=" ">=" "==" "!=" "+="
@@ -177,8 +196,19 @@ def separador(cadena):
     tokenaux.clear()
 
     #Junta los numeros flotantes
+    compru = 0
     for i in range(len(tokens)):
-        if compnum(tokens[i]) and tokens[i+1] == "." and compnum(tokens[i+2]):
+        if compru != 0:
+            compru -= 1
+        elif tokens[i] == "." and compnum(tokens[i+1]):
+            tokenaux += tokens[i]
+            tokenaux += tokens[i+1]
+            tokens[i] = "".join(tokenaux)
+            tokens[i+1] = ""
+            listado.append(i+1)
+            compru = 1
+            tokenaux.clear()
+        elif compnum(tokens[i]) and tokens[i+1] == "." and compnum(tokens[i+2]):
             tokenaux += tokens[i]
             tokenaux += tokens[i+1]
             tokenaux += tokens[i+2]
@@ -187,7 +217,9 @@ def separador(cadena):
             tokens[i+2] = ""
             listado.append(i+1)
             listado.append(i+2)
+            compru = 2
             tokenaux.clear()
+        
     tokenaux.clear()
 
     #Elimina los datos sobrados
@@ -262,7 +294,11 @@ def transforma(archivo):
     arch.close()
     return cadena
 
-# Main==================================================================
+######################
+#####            #####
+#####    Main    #####
+#####            #####
+######################
 
 #Comprueba si los parametros estasn correctos
 if len(sys.argv) == 2:

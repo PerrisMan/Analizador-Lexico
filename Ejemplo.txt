@@ -7,7 +7,7 @@ Soy superma{{[}]))"n"<=
 "Tu no eres"==
 /**Yo si
 Jaja*jaja**/ja
-015.620 0516.656000a 0000000021
+015.620 0516.656000a 0000.0.00021
 asdf15_a*sdf/* asdf +->=
-asdf=1.2!=00003.*=*/=11.5a*+=sd/
-for for if none else return
+asdf=1.2!=000"03.*=*/=11.5a*+=sd/
+for for if none else return;
