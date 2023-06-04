@@ -4,5 +4,17 @@ class hola{
         var huevos;
     }
 
+    ifesito(){
+        if(a > b){
+            a = (a + b)
+        }
+    }
+
+    pawh(){
+        while(a){
+
+        }
+    }
+
 
 }

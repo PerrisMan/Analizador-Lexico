@@ -12,6 +12,7 @@ indicador = 0
 #Errores
 def error():
     print("Error sintactico: ")
+    print(globalTokens[indicador])
     sys.exit(1)
 
 
