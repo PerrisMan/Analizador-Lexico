@@ -1,6 +1,8 @@
 class hola{
 
-    var huevos;
+    hola(){
+        var huevos;
+    }
 
 
 }

@@ -11,9 +11,11 @@ indicador = 0
 
 #Errores
 def error():
-    print("Error sintactico")
+    print("Error sintactico: ")
     sys.exit(1)
 
+
+#Ejecución del analizado sintáctico
 def program():
     global indicador
     declaration()
@@ -21,8 +23,6 @@ def program():
         print("La cadena fue valida")
     else:
         print("Error de la cadena")
-        
-
 
 #Declaraciones---------------------------------------------
 def declaration():
@@ -250,7 +250,7 @@ def block():
     global indicador
     if globalTokens[indicador] == '{':
         indicador += 1
-        if block_decl:
+        if block_decl():
             if globalTokens[indicador] == '}':
                 indicador += 1
                 return True
@@ -266,22 +266,319 @@ def block_decl():
         else: error()
     else: return True
 
-
-#Expreciones----------------------------------------------
+#Expresiones----------------------------------------------
 def expression():
-    return True
+    global indicador
+    if assignment(): return True
+    else: return False
 
-#def for_stmt_1():
+def assignment():
+    global indicador
+    if logic_or():
+        if assignment_opc(): return True
+        else: error()
+    else: return False
 
+def assignment_opc():
+    global indicador
+    if globalTokens[indicador] == '=':
+        indicador += 1
+        if expression(): return True
+        else: error()
+    else: return True
+
+def logic_or():
+    global indicador
+    if logic_and():
+        if logic_or_2(): return True
+        else: error()
+    else: return False
+
+def logic_or_2():
+    global indicador
+    if globalTokens[indicador] == 'OR':
+        indicador += 1
+        if logic_and():
+            if logic_or_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def logic_and():
+    global indicador
+    if equality():
+        if logic_and_2(): return True
+        else: error()
+    else: return False
+
+def logic_and_2():
+    global indicador
+    if globalTokens[indicador] == 'AND':
+        indicador += 1
+        if equality():
+            if logic_and_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def equality():
+    global indicador
+    if comparison():
+        if equality_2(): return True
+        else: error()
+    else: return False
+
+def equality_2():
+    global indicador
+    if globalTokens[indicador] == '!=':
+        indicador += 1
+        if comparison():
+            if equality_2(): return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '==':
+        indicador += 1
+        if comparison():
+            if equality_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def comparison():
+    global indicador
+    if term():
+        if comparison_2(): return True
+        else: error()
+    else: return False
+
+def comparison_2():
+    global indicador
+    if globalTokens[indicador] == '>':
+        indicador += 1
+        if term():
+            if comparison_2(): return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '>=':
+        indicador += 1
+        if term():
+            if comparison_2(): return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '<':
+        indicador += 1
+        if term():
+            if comparison_2(): return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '<=':
+        indicador += 1
+        if term():
+            if comparison_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def term():
+    global indicador
+    if factor():
+        if term_2(): return True
+        else: error()
+    else: return False
+
+def term_2():
+    global indicador
+    if globalTokens[indicador] == '-':
+        indicador += 1
+        if factor():
+            if term_2(): return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '+':
+        indicador += 1
+        if factor():
+            if term_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def factor():
+    global indicador
+    if unary():
+        if factor_2(): return True
+        else: error()
+    else: return False
+
+def factor_2():
+    global indicador
+    if globalTokens[indicador] == '/':
+        indicador += 1
+        if unary():
+            if factor_2(): return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '*':
+        indicador += 1
+        if unary():
+            if factor_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def unary():
+    global indicador
+    if globalTokens[indicador] == '!':
+        indicador += 1
+        if unary(): return True
+        else: error()
+    elif globalTokens[indicador] == '-':
+        indicador += 1
+        if unary(): return True
+        else: error()
+    elif call(): return True
+    else: return False
+
+def call():
+    global indicador
+    if primary():
+        if call_2(): return True
+        else: error()
+    else: return False
+
+def call_2():
+    global indicador
+    if globalTokens[indicador] == '(':
+        indicador += 1
+        if arguments_opc():
+            if globalTokens[indicador] == ')':
+                indicador += 1
+                if call_2(): return True
+                else: error()
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == '.':
+        indicador += 1
+        if globalTokens[indicador] == 'ID':
+            indicador += 1
+            if call_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def call_opc():
+    global indicador
+    
+def primary():
+    global indicador
+    if globalTokens[indicador] == 'TRUE':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'FALSE':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'NULL':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'THIS':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'NUMBER':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'STRING':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'ID':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == '(':
+        indicador += 1
+        if expression():
+            if globalTokens[indicador] == ')':
+                indicador += 1
+                return True
+            else: error()
+        else: error()
+    elif globalTokens[indicador] == 'SUPER':
+        indicador += 1
+        if globalTokens[indicador] == '.':
+            indicador += 1
+            if globalTokens[indicador] == 'ID':
+                indicador += 1
+                return True
+            else: error()
+        else: error()
+    else: return False
 
 #Otras----------------------------------------------------
 def funct():
-    return True
+    global indicador
+    if globalTokens[indicador] == 'ID':
+        indicador += 1
+        if globalTokens[indicador] == '(':
+            indicador += 1
+            if parameters_opc():
+                if globalTokens[indicador] == ')':
+                    indicador += 1
+                    if block(): return True
+                    else: error()
+                else: error()
+            else: error()
+        else: error()
+    else: return False
 
 def functions():
-    return True
+    global indicador
+    if funct():
+        if functions(): return True
+        else: error()
+    else: return True
 
+def parameters_opc():
+    global indicador
+    if parameters(): return True
+    else: return True
 
+def parameters():
+    global indicador
+    if globalTokens[indicador] == 'ID':
+        indicador += 1
+        if parameters_2(): return True
+        else: error()
+    else: False
+
+def parameters_2():
+    global indicador
+    if globalTokens[indicador] == ',':
+        indicador += 1
+        if globalTokens[indicador] == 'ID':
+            indicador += 1
+            if parameters_2(): return True
+            else: error()
+        else: error()
+    else: return True
+
+def arguments_opc():
+    global indicador
+    if arguments(): return True
+    else: return True
+
+def arguments():
+    global indicador
+    if expression():
+        if arguments_2(): return True
+        else: error()
+    else: False
+
+def arguments_2():
+    global indicador
+    if globalTokens[indicador] == ',':
+        indicador += 1
+        if expression():
+            if arguments_2(): return True
+            else: error()
+        else: error()
+    else: return True
 
 
 
@@ -326,20 +623,19 @@ def compfloat(cadena):
 #Palabras reservadas
 def reservadas(cadena):
     palabrasHM = {'for':'FOR', 'fun':'FUN', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
-                'true':'TRUE', 'var':'VAR', 'else':'ELSE', 'or':'OR', 'none':'NONE', 'try':'TRY',
+                'true':'TRUE', 'var':'VAR', 'else':'ELSE', 'or':'OR', 'null':'NULL', 'try':'TRY',
                 'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'ID', 'float':'FLOAT',
                 'int':'INT', 'string':'STRING', '=':'=', 'while':'WHILE',
-                '+':'+','-':'-','/':'/','*':'*','+=':'+=',
-                '<=':'<=', '>=':'>=','==':'==','!=':'!=', '<':'<', '>':'>',
-                '-=':'-=','{':'{','}':'}','[':'[',']':']',
-                '(':'(',')':')',';':';','.':'.',',':',',
-                'class':'CLASS'}
+                '+':'+', '-':'-', '/':'/', '*':'*', '+=':'+=',
+                '<=':'<=', '>=':'>=', '==':'==', '!=':'!=', '<':'<', '>':'>',
+                '-=':'-=', '{':'{', '}':'}', '[':'[', ']':']',
+                '(':'(', ')':')', ';':';', '.':'.', ',':',',
+                'class':'CLASS', 'this':'THIS', 'super':'SUPER'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
         return False
   
-
 #Asignar palabras reservadas en tokens
 def PalRe(cadena):
     tokens=[]
@@ -368,7 +664,6 @@ def PalRe(cadena):
 
     return tokens
 
-
 #Categorias
 def comillas(caracter):
     return caracter in "\""
@@ -394,7 +689,6 @@ def compnum(cadena):
         if numeros(n) == False:
             validar = False
     return validar
-
 
 #Separa cada token
 def separador(cadena):
@@ -617,8 +911,12 @@ def remove(cadena):
 
 
 
+#############################
+###                       ###
+###   Función principal   ###
+###                       ###
+#############################
 
-#Función principal------------------------------------------------------
 def lexico(cadena):
     cad = remove(cadena)
     global globalLex 
@@ -627,10 +925,9 @@ def lexico(cadena):
     globalTokens = PalRe(globalLex)
     
     program()
+    
 
-    
-     
-    
+
 
 #Transforma archivo txt a cadena
 def transforma(archivo):
@@ -643,6 +940,8 @@ def transforma(archivo):
             cadena += c
     arch.close()
     return cadena
+
+
 
 ######################
 #####            #####
