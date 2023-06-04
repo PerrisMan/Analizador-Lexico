@@ -1,14 +1,6 @@
-/Hola como estas
-Muy bien y tu<=
-//Superman
-hola
-Pe*rr <= b
-Soy superma{{[}]))"n"<=
-"Tu no eres"==
-/**Yo si
-Jaja*jaja**/ja
-015.620 0516.656,0"00a"a 0000.0.00021
-012.
-asdf15_a*sdf/* asdf +->=
-asdf=1.2!=000"03.*=*/=11.5a*+=sd/
-for for if none else, return; class 650.=
+class hola{
+
+    var huevos;
+
+
+}

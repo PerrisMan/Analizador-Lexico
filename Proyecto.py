@@ -1,11 +1,285 @@
 import sys
 import os
 
+indicador = 0
+
 #######################################
 #####                             #####
 #####    Analizador sintáctico    #####
 #####                             #####
 #######################################
+
+#Errores
+def error():
+    print("Error sintactico")
+    sys.exit(1)
+
+def program():
+    global indicador
+    declaration()
+    if globalTokens[indicador] == 'EOF':
+        print("La cadena fue valida")
+    else:
+        print("Error de la cadena")
+        
+
+
+#Declaraciones---------------------------------------------
+def declaration():
+    if class_decl():
+        declaration()
+    elif fun_decl():
+        declaration()
+    elif var_decl():
+        declaration()
+    elif statement():
+        declaration()
+    else: pass
+        
+def class_decl():
+    global indicador
+    if globalTokens[indicador] == 'CLASS':
+        indicador += 1
+        if globalTokens[indicador] == 'ID':
+            indicador += 1
+            if class_inher():
+                if globalTokens[indicador] == '{':
+                    indicador += 1
+                    if functions():
+                        if globalTokens[indicador] == '}':
+                            indicador += 1
+                            return True
+                        else: error()
+                    else: error()
+                else: error()
+            else: error()
+        else: error()
+    else: return False
+
+def class_inher():
+    global indicador
+    if globalTokens[indicador] == '<':
+        indicador += 1
+        if globalTokens[indicador] == 'ID':
+            indicador += 1
+            return True
+        else: error()
+    else: return True
+
+def fun_decl():
+    global indicador
+    if globalTokens[indicador] == 'FUN':
+        indicador += 1
+        if funct(): return True
+    else: return False
+
+def var_decl():
+    global indicador
+    if globalTokens[indicador] == 'VAR':
+        indicador += 1
+        if globalTokens[indicador] == 'ID':
+            indicador += 1
+            if var_init():
+                if globalTokens[indicador] == ';':
+                    indicador += 1
+                    return True
+                else: error()
+            else: error()
+        else: error()
+    else: return False
+
+def var_init():
+    global indicador
+    if globalTokens[indicador] == '=':
+        indicador += 1
+        if expression():
+            return True
+    else: return True
+
+#Sentencias------------------------------------------------
+def statement():
+    global indicador
+    if expr_stmt():
+        return True
+    elif for_stmt():
+        return True
+    elif if_stmt():
+        return True
+    elif print_stmt():
+        return True
+    elif return_stmt():
+        return True
+    elif while_stmt():
+        return True
+    elif block():
+        return True
+    else: return False
+
+def expr_stmt():
+    global indicador
+    if expression():
+        return True
+    else: return False
+
+def for_stmt():
+    global indicador
+    if globalTokens[indicador] == 'FOR':
+        indicador += 1
+        if globalTokens[indicador] == '(':
+            indicador += 1
+            if for_stmt_1():
+                if for_stmt_2():
+                    if for_stmt_3():
+                        if globalTokens[indicador] == ')':
+                            indicador += 1
+                            if statement():
+                                return True
+                            else: error()
+                        else: error()
+                    else: error()
+                else: error()
+            else: error()
+        else: error()
+    else: return False
+
+def for_stmt_1():
+    global indicador
+    if var_decl():
+        return True
+    elif expr_stmt():
+        return True
+    elif globalTokens[indicador] == ';':
+        indicador += 1
+        return True
+    else: return False
+
+def for_stmt_2():
+    global indicador
+    if expression():
+        if globalTokens[indicador] == ';':
+            indicador += 1
+            return True
+        else: error()
+    elif globalTokens[indicador] == ';':
+        indicador += 1
+        return True
+    else: return False
+
+def for_stmt_3():
+    global indicador
+    if expression():
+        return True
+    else: return True
+
+def if_stmt():
+    global indicador
+    if globalTokens[indicador] == 'IF':
+        indicador += 1
+        if globalTokens[indicador] == '(':
+            indicador += 1
+            if expression():
+                if globalTokens[indicador] == ')':
+                    indicador += 1
+                    if statement():
+                        if else_statement():
+                            return True
+                        else: error()
+                    else: error()
+                else: error()
+            else: error()
+        else: error()
+    else: return False
+
+def else_statement():
+    global indicador
+    if globalTokens[indicador] == 'ELSE':
+        indicador += 1
+        if statement():
+            return True
+        else: error()
+    else: return True
+
+def print_stmt():
+    global indicador
+    if globalTokens[indicador] == 'PRINT':
+        indicador += 1
+        if expression():
+            if globalTokens[indicador] == ';':
+                indicador += 1
+                return True
+            else: error()
+        else: error()
+    else: return False
+
+def return_stmt():
+    global indicador
+    if globalTokens[indicador] == 'RETURN':
+        indicador += 1
+        if return_exp_opc():
+            if globalTokens[indicador] == ';':
+                indicador += 1
+                return True
+            else: error()
+        else: error()
+    else: return False
+
+def return_exp_opc():
+    global indicador
+    if expression():
+        return True
+    else: return True
+
+def while_stmt():
+    global indicador
+    if globalTokens[indicador] == 'WHILE':
+        indicador += 1
+        if globalTokens[indicador] == '(':
+            indicador += 1
+            if expression():
+                if globalTokens[indicador] == ')':
+                    indicador += 1
+                    if statement():
+                        return True
+                    else: error()
+                else: error()
+            else: error()
+        else: error()   
+    else: return False
+
+def block():
+    global indicador
+    if globalTokens[indicador] == '{':
+        indicador += 1
+        if block_decl:
+            if globalTokens[indicador] == '}':
+                indicador += 1
+                return True
+            else: error()
+        else: error()
+    else: return False
+
+def block_decl():
+    global indicador
+    if declaration():
+        if block_decl():
+            return True
+        else: error()
+    else: return True
+
+
+#Expreciones----------------------------------------------
+def expression():
+    return True
+
+#def for_stmt_1():
+
+
+#Otras----------------------------------------------------
+def funct():
+    return True
+
+def functions():
+    return True
 
 
 
@@ -26,7 +300,7 @@ def convCadena(cadena):
         return "".join(newPala)
 
 #Imprime tokens
-def imprimeTokens(cadenas, tokens):
+"""def imprimeTokens(cadenas, tokens):
     for i in range(len(cadenas)):
         #Para floats
         if tokens[i] == 'FLOAT':
@@ -40,7 +314,7 @@ def imprimeTokens(cadenas, tokens):
         #Para los otros
         elif cadenas[i] != '\n':
             print(f'Token: {tokens[i]}, Lexema: {cadenas[i]}')
-    return
+    return"""
 
 #Comprueba si es un numero flotante
 def compfloat(cadena):
@@ -51,14 +325,15 @@ def compfloat(cadena):
 
 #Palabras reservadas
 def reservadas(cadena):
-    palabrasHM = {'for':'FOR', 'fun':'FUNCION', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
-                'true':'TRUE', 'var':'VARIABLE', 'else':'ELSE', 'or':'OR', 'none':'NONE', 'try':'TRY',
-                'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'IDENTIFICADOR', 'float':'FLOAT',
-                'int':'INT', 'string':'STRING','llaves':'LLAVES', '=':'IGUAL',
-                '+':'SUMA','-':'RESTA','/':'DIVISION','*':'MULTIPLICACION','+=':'SUMAIGUAL',
-                '<=':'MENORIGUAL', '>=':'MAYORIGUAL','==':'IGUALDAD','!=':'DISTINTO', '<':'MENORQUE', '>':'MAYORQUE',
-                '-=':'RESTAIGUAL','{':'LLAVEABRE','}':'LLAVECIERRA','[':'CORCHETEABRE',']':'CORCHETECIERRA',
-                '(':'PARENTESISABRE',')':'PARENTESISCIERRA',';':'PUNTOYCOMA','.':'PUNTO',',':'COMA'}
+    palabrasHM = {'for':'FOR', 'fun':'FUN', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
+                'true':'TRUE', 'var':'VAR', 'else':'ELSE', 'or':'OR', 'none':'NONE', 'try':'TRY',
+                'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'ID', 'float':'FLOAT',
+                'int':'INT', 'string':'STRING', '=':'=', 'while':'WHILE',
+                '+':'+','-':'-','/':'/','*':'*','+=':'+=',
+                '<=':'<=', '>=':'>=','==':'==','!=':'!=', '<':'<', '>':'>',
+                '-=':'-=','{':'{','}':'}','[':'[',']':']',
+                '(':'(',')':')',';':';','.':'.',',':',',
+                'class':'CLASS'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -87,7 +362,10 @@ def PalRe(cadena):
                 tokens.append(reservadas(cad))
         else:
             tokens.append(reservadas(cad))
-            
+
+    #Agrega EOF al último
+    tokens.append('EOF')
+
     return tokens
 
 
@@ -274,6 +552,7 @@ def separador(cadena):
         num -= cont
         tokens.pop(num)
         cont += 1
+    
     #Elimina espacios
     cont=0
     for i in range(len(tokens)):
@@ -281,6 +560,22 @@ def separador(cadena):
             cont+=1
     for j in range(cont):
         tokens.remove(' ')
+
+    #Elimina espacios \t
+    cont=0
+    for i in range(len(tokens)):
+        if tokens[i]=='\t':
+            cont+=1
+    for j in range(cont):
+        tokens.remove(' \t')
+    
+    #Elimina saltos de linea
+    cont=0
+    for i in range(len(tokens)):
+        if tokens[i]=='\n':
+            cont+=1
+    for j in range(cont):
+        tokens.remove('\n')
 
     return tokens
 
@@ -320,12 +615,22 @@ def remove(cadena):
             estado = 3  
     return cad
 
+
+
+
 #Función principal------------------------------------------------------
 def lexico(cadena):
     cad = remove(cadena)
-    sep = separador(cad)
-    ttokens = PalRe(sep)
-    imprimeTokens(sep, ttokens)
+    global globalLex 
+    globalLex = separador(cad)
+    global globalTokens 
+    globalTokens = PalRe(globalLex)
+    
+    program()
+
+    
+     
+    
 
 #Transforma archivo txt a cadena
 def transforma(archivo):
@@ -365,4 +670,3 @@ elif len(sys.argv) == 1:
 #Manda error si no se cumple lo anterior    
 else:
     print("Error de ejecución")
-    
