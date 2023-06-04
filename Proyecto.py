@@ -192,46 +192,83 @@ def separador(cadena):
     if estado == 3:
         print("Error léxico, una cadena no fue terminanda")
         sys.exit(1)
+    if estado == 2 or estado == 1:
+        tokens.append("".join(tokenaux))
+        tokenaux.clear()
     tokenaux.clear()
+
+    print(tokens)
 
     #Junta los operadores: "<=" ">=" "==" "!=" "+="
     for i in range(len(tokens)):
-        if (tokens[i] in "!=+-<>") and tokens[i+1] == "=":
-            tokenaux += tokens[i]
-            tokenaux += tokens[i+1]
-            tokens[i] = "".join(tokenaux)
-            tokens[i+1] = ""
-            listado.append(i+1)
-            tokenaux.clear()
+        try:
+            if (tokens[i] in "!=+-<>") and tokens[i+1] == "=":
+                tokenaux += tokens[i]
+                tokenaux += tokens[i+1]
+                tokens[i] = "".join(tokenaux)
+                tokens[i+1] = ""
+                listado.append(i+1)
+                tokenaux.clear()
+        except IndexError:
+            pass
     tokenaux.clear()
 
     #Junta los numeros flotantes
     compru = 0
     for i in range(len(tokens)):
-        if compru != 0:
-            compru -= 1
-        elif tokens[i] == "." and compnum(tokens[i+1]):
-            tokenaux += tokens[i]
-            tokenaux += tokens[i+1]
-            tokens[i] = "".join(tokenaux)
-            tokens[i+1] = ""
-            listado.append(i+1)
-            compru = 1
-            tokenaux.clear()
-        elif compnum(tokens[i]) and tokens[i+1] == "." and compnum(tokens[i+2]):
-            tokenaux += tokens[i]
-            tokenaux += tokens[i+1]
-            tokenaux += tokens[i+2]
-            tokens[i] = "".join(tokenaux)
-            tokens[i+1] = ""
-            tokens[i+2] = ""
-            listado.append(i+1)
-            listado.append(i+2)
-            compru = 2
-            tokenaux.clear()        
-    tokenaux.clear()
+        try:    
+            if compru != 0:
+                compru -= 1
+            elif compnum(tokens[i]) and tokens[i+1] == "." and compnum(tokens[i+2]):
+                tokenaux += tokens[i]
+                tokenaux += tokens[i+1]
+                tokenaux += tokens[i+2]
+                tokens[i] = "".join(tokenaux)
+                tokens[i+1] = ""
+                tokens[i+2] = ""
+                listado.append(i+1)
+                listado.append(i+2)
+                compru = 2
+                tokenaux.clear() 
+            elif tokens[i] == "." and compnum(tokens[i+1]):
+                tokenaux += tokens[i]
+                tokenaux += tokens[i+1]
+                tokens[i] = "".join(tokenaux)
+                tokens[i+1] = ""
+                listado.append(i+1)
+                compru = 1
+                tokenaux.clear()
+            elif compnum(tokens[i]) and tokens[i+1] == '.':
+                tokenaux += tokens[i]
+                tokenaux += tokens[i+1]
+                tokens[i] = "".join(tokenaux)
+                tokens[i+1] = ""
+                listado.append(i+1)
+                compru = 1
+                tokenaux.clear()
 
-    print (tokens)
+        except IndexError:
+            if (i + 2) > len(tokens):
+                compru = 0
+            elif tokens[i] == "." and compnum(tokens[i+1]):
+                tokenaux += tokens[i]
+                tokenaux += tokens[i+1]
+                tokens[i] = "".join(tokenaux)
+                tokens[i+1] = ""
+                listado.append(i+1)
+                compru = 1
+                tokenaux.clear()
+            elif compnum(tokens[i]) and tokens[i+1] == '.':
+                tokenaux += tokens[i]
+                tokenaux += tokens[i+1]
+                tokens[i] = "".join(tokenaux)
+                tokens[i+1] = ""
+                listado.append(i+1)
+                compru = 1
+                tokenaux.clear()
+
+         
+    tokenaux.clear()
 
     #Elimina los datos sobrados
     listado.sort()
