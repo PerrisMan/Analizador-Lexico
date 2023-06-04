@@ -16,5 +16,11 @@ class hola{
         }
     }
 
+    palrato(){
+        for (var a = b; y < c; c = c + 1.){
+            print("hola mundo");
+        }
+    }
 
 }
+

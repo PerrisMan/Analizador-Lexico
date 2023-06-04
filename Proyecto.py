@@ -483,7 +483,10 @@ def primary():
     elif globalTokens[indicador] == 'THIS':
         indicador += 1
         return True
-    elif globalTokens[indicador] == 'NUMBER':
+    elif globalTokens[indicador] == 'INT':
+        indicador += 1
+        return True
+    elif globalTokens[indicador] == 'FLOAT':
         indicador += 1
         return True
     elif globalTokens[indicador] == 'STRING':
