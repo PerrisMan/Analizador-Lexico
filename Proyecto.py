@@ -119,7 +119,10 @@ def statement():
 def expr_stmt():
     global indicador
     if expression():
-        return True
+        if globalTokens[indicador] == ';':
+            indicador += 1
+            return True
+        else: error()
     else: return False
 
 def for_stmt():

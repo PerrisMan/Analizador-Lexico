@@ -6,18 +6,19 @@ class hola{
 
     ifesito(){
         if(a > b){
-            a = (a + b)
+            a = (a + b);
+            a = b;
         }
     }
 
     pawh(){
-        while(a){
+        while(true){
 
         }
     }
 
     palrato(){
-        for (var a = b; y < c; c = c + 1.){
+        for (;;){
             print("hola mundo");
         }
     }
