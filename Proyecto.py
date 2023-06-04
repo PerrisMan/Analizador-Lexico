@@ -355,6 +355,7 @@ if len(sys.argv) == 2:
 #Comprueba si no se intodujo texto
 elif len(sys.argv) == 1:
     cadena =[]
+    print("Para terminar esciba 'ok'")
     while True:
         escrito = input('>>')
         if escrito != 'ok':
