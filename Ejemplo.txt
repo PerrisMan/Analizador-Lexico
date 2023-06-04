@@ -1,27 +1,16 @@
 class hola{
 
-    hola(){
-        var huevos;
+    imprime(){
+        print("hola");
     }
 
-    ifesito(){
-        if(a > b){
-            a = (a + b);
-            a = b;
-        }
+    suma(a){
+        a = a + b;
     }
 
-    pawh(){
-        while(true){
+    repeticion(){
+        for(;;){
 
         }
     }
-
-    palrato(){
-        for (;;){
-            print("hola mundo");
-        }
-    }
-
 }
-
