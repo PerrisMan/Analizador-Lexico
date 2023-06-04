@@ -197,8 +197,6 @@ def separador(cadena):
         tokenaux.clear()
     tokenaux.clear()
 
-    print(tokens)
-
     #Junta los operadores: "<=" ">=" "==" "!=" "+="
     for i in range(len(tokens)):
         try:
@@ -266,7 +264,6 @@ def separador(cadena):
                 listado.append(i+1)
                 compru = 1
                 tokenaux.clear()
-
          
     tokenaux.clear()
 
@@ -348,12 +345,23 @@ def transforma(archivo):
 #####            #####
 ######################
 
-#Comprueba si los parametros estasn correctos
+#Comprueba si se introdujo un texto
 if len(sys.argv) == 2:
     cadena = transforma(sys.argv[1])
     if (not cadena):
         print("Error al leer el archivo. No existe. Error 404")
     else :
         lexico(cadena)
+#Comprueba si no se intodujo texto
+elif len(sys.argv) == 1:
+    cadena =[]
+    while True:
+        escrito = input('>>')
+        if escrito != 'ok':
+            cadena += escrito + '\n'
+        else: break
+    lexico(cadena)
+#Manda error si no se cumple lo anterior    
 else:
-    print("El uso correcto es el siguiente: [py] [nombre programa] [nombre archivo a modificar]")
+    print("Error de ejecución")
+    
