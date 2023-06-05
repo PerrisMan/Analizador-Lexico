@@ -7,11 +7,6 @@ class hola{
     suma(a){
         a = a + b;
     }
-/*
-
-
-
-*/
     repeticion(){
         for(;;){
 

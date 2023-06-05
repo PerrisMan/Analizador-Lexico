@@ -12,7 +12,7 @@ indicador = 0
 #Errores
 def error():
     print("\nError en la linea " + str(globalLin[indicador]))
-    print("No se esperaba el token " + globalTokens[indicador] + ' -> ' + globalLex[indicador] + '\n')
+    print("No se esperaba el token " + globalTokens[indicador] + '\n')
     sys.exit(1)
 
 
