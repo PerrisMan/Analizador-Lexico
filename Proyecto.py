@@ -11,8 +11,8 @@ indicador = 0
 
 #Errores
 def error():
-    print("Error sintactico: ")
-    print(globalTokens[indicador])
+    print("\nError en la linea " + str(globalLin[indicador]))
+    print("No se esperaba el token " + globalTokens[indicador] + ' -> ' + globalLex[indicador] + '\n')
     sys.exit(1)
 
 
@@ -699,6 +699,7 @@ def compnum(cadena):
 
 #Separa cada token
 def separador(cadena):
+    lineas = []
     estado = 0
     tokens = []
     tokenaux = []
@@ -872,13 +873,15 @@ def separador(cadena):
     
     #Elimina saltos de linea
     cont=0
-    for i in range(len(tokens)):
+
+    for i in range(len(tokens)):    
         if tokens[i]=='\n':
             cont+=1
+        else: lineas.append(cont+1)
     for j in range(cont):
         tokens.remove('\n')
 
-    return tokens
+    return tokens, lineas
 
 #Omite los comentarios
 def remove(cadena):
@@ -904,6 +907,7 @@ def remove(cadena):
         #estado 2
         elif estado == 2 and c == '\n':
             estado = 0
+            cad += c
         #estado 3
         elif estado == 3 and c == '*':
             estado = 4
@@ -914,6 +918,9 @@ def remove(cadena):
             estado = 0
         elif estado == 4 and c != '/':
             estado = 3  
+        if estado != 0:
+            if c == '\n':
+                cad += c
     return cad
 
 
@@ -926,11 +933,11 @@ def remove(cadena):
 
 def lexico(cadena):
     cad = remove(cadena)
-    global globalLex 
-    globalLex = separador(cad)
+    global globalLex, globalLin
+    globalLex, globalLin = separador(cad)
     global globalTokens 
     globalTokens = PalRe(globalLex)
-    
+
     program()
     
 
