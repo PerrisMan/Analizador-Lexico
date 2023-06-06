@@ -23,7 +23,7 @@ def program():
     if globalTokens[indicador] == 'EOF':
         print("La cadena fue valida")
     else:
-        print("Error de la cadena")
+        error()
 
 #Declaraciones---------------------------------------------
 def declaration():
