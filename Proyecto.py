@@ -11,7 +11,7 @@ indicador = 0
 
 #Errores
 def error():
-    print("\nError en la linea " + str(globalLin[indicador]))
+    print("\nError en la linea " + str(globalLin[indicador-1]))
     print("No se esperaba el token " + globalTokens[indicador] + '\n')
     sys.exit(1)
 
@@ -604,7 +604,7 @@ def convCadena(cadena):
         return "".join(newPala)
 
 #Imprime tokens
-"""def imprimeTokens(cadenas, tokens):
+def imprimeTokens(cadenas, tokens):
     for i in range(len(cadenas)):
         #Para floats
         if tokens[i] == 'FLOAT':
@@ -618,7 +618,7 @@ def convCadena(cadena):
         #Para los otros
         elif cadenas[i] != '\n':
             print(f'Token: {tokens[i]}, Lexema: {cadenas[i]}')
-    return"""
+    return
 
 #Comprueba si es un numero flotante
 def compfloat(cadena):
