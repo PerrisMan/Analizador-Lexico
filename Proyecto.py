@@ -922,8 +922,30 @@ def remove(cadena):
             if c == '\n':
                 cad += c
     return cad
+###################################
+#####                         #####
+#####  Analizador semantico   #####
+#####                         #####
+###################################
 
+def analizador_semantico(codigo):
+    variables = {}  # Diccionario para almacenar las variables y sus estados
 
+    lineas = codigo.split('\n')  # Dividir el código en líneas
+
+    for linea in lineas:
+        if "var" in linea:
+            # Obtener el nombre de la variable
+            nombre_variable = linea.split("var")[1].strip()
+
+            # Verificar si la variable ya ha sido declarada
+            if nombre_variable in variables:
+                print(f"Error semántico: La variable '{nombre_variable}' ya ha sido declarada")
+            else:
+                # Agregar la variable al diccionario
+                variables[nombre_variable] = True
+
+    print("Análisis semántico completado")
 
 #############################
 ###                       ###
