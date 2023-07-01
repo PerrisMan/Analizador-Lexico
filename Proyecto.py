@@ -997,16 +997,16 @@ def GenePost():
 
         # Si es operador
         elif esOperador(token):
-            while (len(pilaTok)) and (pilaTok[-1] ):
-            temp1 = pilaTok.pop()
-            temp2 = pilaLex.pop()
-            postfijaTokens.add(temp1)
-            postfijaLex.add(temp2)
-        pilaTok.add(token)
-        pilaLex.add(globalLex[i])
-        # S
+            while (len(pilaTok)) and (pilaTok[-1]=='>=' ):
+                temp1 = pilaTok.pop()
+                temp2 = pilaLex.pop()
+                postfijaTokens.add(temp1)
+                postfijaLex.add(temp2)
+            pilaTok.add(token)
+            pilaLex.add(globalLex[i])
+        # Si es llave
         elif esOperador(token):
-        while (len(pilaTok) != 0) and (pilaTok[-1] != '{'):
+            while (len(pilaTok) != 0) and (pilaTok[-1] != '{'):
     
     
     print(postfijaLex)
