@@ -955,6 +955,8 @@ def GenePost():
     postfijaLex = []
     estructControlPila = []
     estructControl = False
+    infijaTokens = []
+    infijaLex = []
 
     for i in range(globalTokens):
         token = globalTokens[i]
@@ -1011,13 +1013,40 @@ def GenePost():
                 temp2= pilaTok.pop()
                 postfijaTokens.add(temp1)
                 postfijaLex.add(temp2)
-            postfijaLex.add(token)
+            postfijaTokens.add(token)
             postfijaLex.add(globalLex)
         elif token =='(':
             pilaTok.add(token)
             pilaLex.add(globalLex[i])
         elif token == '}' and estructControl:
-            if 
+            if (globalTokens[i + 1]== 'ELSE'):
+                pilaTok.pop()
+                pilaLex.pop()
+            else:
+                pilaTok.pop()
+                pilaLex.pop()
+                postfijaTokens.add(token==';')
+                postfijaLex.add(token==';')
+                tokenaux=estructControlPila.pop()
+            if (tokenaux=='ELSE'):
+                estructControlPila.pop()
+                postfijaLex.add(token==';')
+                postfijaTokens.add(token==';')
+            if estructControlPila.isEmpty():
+                estructControl=False
+            
+        
+    
+    while(len(pilaTok) != 0):
+        temp1=pilaTok.pop
+        temp2=pilaTok.pop
+        postfijaLex.add(temp1)
+        postfijaTokens.add(temp2)
+    while(len(estructControl))
+        estructControl=False
+        estructControlPila=False
+                
+
 
     
     
