@@ -486,10 +486,7 @@ def primary():
     elif globalTokens[indicador] == 'THIS':
         indicador += 1
         return True
-    elif globalTokens[indicador] == 'INT':
-        indicador += 1
-        return True
-    elif globalTokens[indicador] == 'FLOAT':
+    elif globalTokens[indicador] == 'NUMERO':
         indicador += 1
         return True
     elif globalTokens[indicador] == 'STRING':
@@ -631,13 +628,13 @@ def compfloat(cadena):
 def reservadas(cadena):
     palabrasHM = {'for':'FOR', 'fun':'FUN', 'false':'FALSE', 'if':'IF', 'print':'PRINT', 'return':'RETURN', 
                 'true':'TRUE', 'var':'VAR', 'else':'ELSE', 'or':'OR', 'null':'NULL', 'try':'TRY',
-                'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'ID', 'float':'FLOAT',
-                'int':'INT', 'string':'STRING', '=':'=', 'while':'WHILE',
+                'not':'NOT', 'break':'BREAK', 'and':'AND', 'identificador':'ID',
+                'string':'STRING', '=':'=', 'while':'WHILE',
                 '+':'+', '-':'-', '/':'/', '*':'*', '+=':'+=',
                 '<=':'<=', '>=':'>=', '==':'==', '!=':'!=', '<':'<', '>':'>',
                 '-=':'-=', '{':'{', '}':'}', '[':'[', ']':']',
                 '(':'(', ')':')', ';':';', '.':'.', ',':',',
-                'class':'CLASS', 'this':'THIS', 'super':'SUPER'}
+                'class':'CLASS', 'this':'THIS', 'super':'SUPER', 'numero':'NUMERO'}
     if cadena in palabrasHM :
         return palabrasHM[cadena]
     else: 
@@ -654,9 +651,9 @@ def PalRe(cadena):
         #Tipo de número
         elif(numeros(cad[0]) or cad[0] == '.'):
             if(compfloat(cad)):
-                tokens.append(reservadas('float'))
+                tokens.append(reservadas('numero'))
             else:
-                tokens.append(reservadas('int'))
+                tokens.append(reservadas('numero'))
         #Tipo de dato
         elif(comillas(cad[0])):
             if(len(cad)>2):
@@ -922,13 +919,94 @@ def remove(cadena):
             if c == '\n':
                 cad += c
     return cad
+
+
 ###################################
 #####                         #####
 #####  Analizador semantico   #####
 #####                         #####
 ###################################
 
-def analizador_semantico(codigo):
+
+# Palabras extra
+def esPalabraReservada(cadena):
+
+    return
+
+def esEstructControl(cadena):
+
+    return
+
+def esOperando(cadena):
+
+    return
+
+def esOperador(cadena):
+
+    return
+
+# Generación postfija
+def GenePost():
+    global globalTokens
+    global globalLex
+    pilaTok = []
+    pilaLex = []
+    postfijaTokens = []
+    postfijaLex = []
+    estructControlPila = []
+    estructControl = False
+
+    for i in range(globalTokens):
+        token = globalTokens[i]
+
+        #Por si termina
+        if token == 'EOF':
+            break
+
+        #Si es palabra reservada
+        if esPalabraReservada(token):
+            postfijaTokens.add(token)
+            postfijaLex.add(globalLex[i])
+            if esEstructControl(token):
+                estructControl = True
+                estructControlPila.add(token)
+
+        # Si es operando
+        elif esOperando(token):
+            postfijaTokens.add(token)
+            postfijaLex.add(globalLex[i])
+
+        # Si es parentesis que abre
+        elif token == '(':
+            pilaTok.add(token)
+            pilaLex.add(globalLex[i])
+
+        # Si es parentesis que cierra
+        elif token == ')':
+            while (len(pilaTok) != 0) and (pilaTok[-1] != '('):
+                temp1 = pilaTok.pop()
+                temp2 = pilaLex.pop()
+                postfijaTokens.add(temp1)
+                postfijaLex.add(temp2)
+            if pilaTok[-1] == '(':
+                pilaTok.pop()
+                pilaLex.pop()
+            if estructControl and (globalTokens[i + 1] == '{'):
+                postfijaTokens.add(';')
+                postfijaLex.add(';')
+
+        # Si es operador
+        elif esOperador(token):
+
+
+    print(postfijaLex)
+    print("\n" + postfijaTokens)
+
+    return True
+
+
+
+def ansal_sema(codigo):
     variables = {}  # Diccionario para almacenar las variables y sus estados
 
     lineas = codigo.split('\n')  # Dividir el código en líneas
@@ -961,9 +1039,10 @@ def lexico(cadena):
     globalTokens = PalRe(globalLex)
 
     program()
+    GenePost()
+
+
     
-
-
 
 #Transforma archivo txt a cadena
 def transforma(archivo):
