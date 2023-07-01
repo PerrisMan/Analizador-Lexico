@@ -1005,8 +1005,20 @@ def GenePost():
             pilaTok.add(token)
             pilaLex.add(globalLex[i])
         # Si es llave
-        elif esOperador(token):
+        elif token ==';':
             while (len(pilaTok) != 0) and (pilaTok[-1] != '{'):
+                temp1= pilaTok.pop()
+                temp2= pilaTok.pop()
+                postfijaTokens.add(temp1)
+                postfijaLex.add(temp2)
+            postfijaLex.add(token)
+            postfijaLex.add(globalLex)
+        elif token =='(':
+            pilaTok.add(token)
+            pilaLex.add(globalLex[i])
+        elif token == '}' and estructControl:
+            if 
+
     
     
     print(postfijaLex)
