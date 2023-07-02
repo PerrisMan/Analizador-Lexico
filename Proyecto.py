@@ -927,6 +927,34 @@ def remove(cadena):
 #####                         #####
 ###################################
 
+# Resolver Árbol
+def recorrer(padre):
+    for n in padre.get_hijos():
+        t = n.get_token()
+        print(t)
+        if t == "+" or t == '-' or t == '*' or t == '/':
+            #solver = SolverAritmetico(n)
+            #res = solver.resolver()
+            #print(res)
+            pass
+        elif t == 'VAR':
+            # Crear una variable. Usar tabla de símbolos
+            pass
+        elif t == 'IF':
+            for n2 in n.get_hijos():
+                print(n2.get_token(), end=' ')
+                
+        elif t == 'ELSE':
+            pass
+        elif t == 'PRINT':
+            for n2 in n.get_hijos():
+                print(n2.get_token(), end=' ')
+        elif t == 'WHILE':
+            pass
+        elif t == 'FOR':
+            pass
+
+
 # Clase Nodo
 class Nodo:
     def __init__(self, tokens, lex):
@@ -967,14 +995,12 @@ class Nodo:
 
 # Generador AST
 def generadorAST(tokens, lexico):
+    global raiz
     raiz = Nodo(None, None)
     pilaPadres = [raiz]
     pila = [raiz]
 
     padre = raiz
-
-    print(tokens)
-    print(lexico)
 
     for i in range(len(tokens)):
         t = tokens[i]
@@ -1006,20 +1032,12 @@ def generadorAST(tokens, lexico):
 
         elif t == ';':
             if len(pila) == 1:
-                """
-                Si la pila está vacía es porque t es un punto y coma
-                que cierra una estructura de control
-                """
                 pilaPadres.pop()
                 padre = pilaPadres[-1]
             else:
                 n = pila.pop()
 
                 if padre.get_token() == 'VAR':
-                    """
-                    En el caso del VAR, es necesario eliminar el igual que
-                    pudiera aparecer en la raíz del nodo n.
-                    """
                     if n.get_token() == '=':
                         padre.insertar_hijos(n.get_hijos())
                     else:
@@ -1032,7 +1050,8 @@ def generadorAST(tokens, lexico):
                     padre = pilaPadres[-1]
                 else:
                     padre.insertar_siguiente_hijo(n)
-    print(raiz)
+    return raiz
+    
 
 
 
@@ -1059,7 +1078,7 @@ def esOperando(cadena):
         return False
     
 def esOperador(cadena):
-    palabras = ['+', '-', '*', '/', '=', '>', '>=', '<', '<=', '==', '!='] 
+    palabras = ['+', '-', '*', '/', '=', '>', '>=', '<', '<=', '==', '!=', 'AND', 'OR'] 
     if cadena in palabras:
         return True
     else: 
@@ -1236,7 +1255,8 @@ def lexico(cadena):
     program()
     postfijaTokens, postfijaLex = GenePost()
 
-    generadorAST(postfijaTokens, postfijaLex)
+    arbol = generadorAST(postfijaTokens, postfijaLex)
+    recorrer(arbol)
     print(postfijaTokens)
     print(postfijaLex)
 

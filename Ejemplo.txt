@@ -1,1 +1,1 @@
-var n8 = 9;
+print nombre + " " + apellido;
