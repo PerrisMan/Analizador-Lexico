@@ -927,23 +927,170 @@ def remove(cadena):
 #####                         #####
 ###################################
 
+# Clase Nodo
+class Nodo:
+    def __init__(self, tokens, lex):
+        self.tokens = tokens
+        self.lex = lex
+        self.hijos = []
+
+    def insertar_hijo(self, n):
+        if self.hijos is None:
+            self.hijos = [n]
+        else:
+            self.hijos.insert(0, n)
+
+    def insertar_siguiente_hijo(self, n):
+        if self.hijos is None:
+            self.hijos = [n]
+        else:
+            self.hijos.append(n)
+
+    def insertar_hijos(self, nodosHijos):
+        for n in nodosHijos:
+            if self.hijos is None:
+                self.hijos = [n]
+            else:
+                self.hijos.append(n)
+
+    def get_token(self):
+        return self.tokens
+    
+    def get_lex(self):
+        return self.lex
+
+    def get_hijos(self):
+        return self.hijos
+ 
+
+
+
+# Generador AST
+def generadorAST(tokens, lexico):
+    raiz = Nodo(None, None)
+    pilaPadres = [raiz]
+    pila = [raiz]
+
+    padre = raiz
+
+    print(tokens)
+    print(lexico)
+
+    for i in range(len(tokens)):
+        t = tokens[i]
+        lex = lexico[i]
+        
+        if t == 'EOF':
+            break
+
+        if esPalabraReservada(t):
+            n = Nodo(t, lex)
+
+            padre = pilaPadres[-1]
+            padre.insertar_siguiente_hijo(n)
+
+            pilaPadres.append(n)
+            padre = n
+
+        elif esOperando(t):
+            n = Nodo(t, lex)
+            pila.append(n)
+
+        elif esOperador(t):
+            ari = aridad(t)
+            n = Nodo(t, lex)
+            for i in range(ari):
+                nodo_aux = pila.pop()
+                n.insertar_hijo(nodo_aux)
+            pila.append(n)
+
+        elif t == ';':
+            if len(pila) == 1:
+                """
+                Si la pila está vacía es porque t es un punto y coma
+                que cierra una estructura de control
+                """
+                pilaPadres.pop()
+                padre = pilaPadres[-1]
+            else:
+                n = pila.pop()
+
+                if padre.get_token() == 'VAR':
+                    """
+                    En el caso del VAR, es necesario eliminar el igual que
+                    pudiera aparecer en la raíz del nodo n.
+                    """
+                    if n.get_token() == '=':
+                        padre.insertar_hijos(n.get_hijos())
+                    else:
+                        padre.insertar_siguiente_hijo(n)
+                    pilaPadres.pop()
+                    padre = pilaPadres[-1]
+                elif padre.get_token() == 'PRINT':
+                    padre.insertar_siguiente_hijo(n)
+                    pilaPadres.pop()
+                    padre = pilaPadres[-1]
+                else:
+                    padre.insertar_siguiente_hijo(n)
+    print(raiz)
+
+
 
 # Palabras extra
 def esPalabraReservada(cadena):
-
-    return
-
+    palabras = ['VAR', 'IF', 'PRINT', 'ELSE', 'FOR', 'WHILE'] 
+    if cadena in palabras:
+        return True
+    else: 
+        return False
+    
 def esEstructControl(cadena):
-
-    return
-
+    palabras = ['IF', 'ELSE', 'FOR', 'WHILE'] 
+    if cadena in palabras:
+        return True
+    else: 
+        return False
+    
 def esOperando(cadena):
-
-    return
-
+    palabras = ['ID', 'NUMERO', 'STRING'] 
+    if cadena in palabras:
+        return True
+    else: 
+        return False
+    
 def esOperador(cadena):
+    palabras = ['+', '-', '*', '/', '=', '>', '>=', '<', '<=', '==', '!='] 
+    if cadena in palabras:
+        return True
+    else: 
+        return False
+    
+def precedenciaMayorIgual(pila, token):
+    return  obtenerPrecedencia(pila) >= obtenerPrecedencia(token)
 
-    return
+def obtenerPrecedencia(cadena):
+    if cadena == '*' or cadena == '/':
+        return 7
+    elif cadena == '+' or cadena == '-':
+        return 6
+    elif cadena == '>' or cadena == '>=' or cadena == '<' or cadena == '<=':
+        return 5
+    elif cadena == '!=' or cadena == '==':
+        return 1
+    elif cadena == 'AND':
+        return 3
+    elif cadena == 'OR':
+        return 2
+    elif cadena == '=':
+        return 1
+    return 0
+
+def aridad(cadena):
+    palabras = ['+', '-', '*', '/', '=', '>', '>=', '<', '<=', '==', '!=']
+    if cadena in palabras:
+        return 2
+    else: 
+        return 0
 
 # Generación postfija
 def GenePost():
@@ -955,10 +1102,8 @@ def GenePost():
     postfijaLex = []
     estructControlPila = []
     estructControl = False
-    infijaTokens = []
-    infijaLex = []
 
-    for i in range(globalTokens):
+    for i in range(len(globalTokens)):
         token = globalTokens[i]
 
         #Por si termina
@@ -967,93 +1112,93 @@ def GenePost():
 
         #Si es palabra reservada
         if esPalabraReservada(token):
-            postfijaTokens.add(token)
-            postfijaLex.add(globalLex[i])
+            postfijaTokens.append(token)
+            postfijaLex.append(globalLex[i])
             if esEstructControl(token):
                 estructControl = True
-                estructControlPila.add(token)
+                estructControlPila.append(token)
 
         # Si es operando
         elif esOperando(token):
-            postfijaTokens.add(token)
-            postfijaLex.add(globalLex[i])
+            postfijaTokens.append(token)
+            postfijaLex.append(globalLex[i])
 
         # Si es parentesis que abre
         elif token == '(':
-            pilaTok.add(token)
-            pilaLex.add(globalLex[i])
+            pilaTok.append(token)
+            pilaLex.append(globalLex[i])
 
         # Si es parentesis que cierra
         elif token == ')':
             while (len(pilaTok) != 0) and (pilaTok[-1] != '('):
                 temp1 = pilaTok.pop()
                 temp2 = pilaLex.pop()
-                postfijaTokens.add(temp1)
-                postfijaLex.add(temp2)
+                postfijaTokens.append(temp1)
+                postfijaLex.append(temp2)
             if pilaTok[-1] == '(':
                 pilaTok.pop()
                 pilaLex.pop()
             if estructControl and (globalTokens[i + 1] == '{'):
-                postfijaTokens.add(';')
-                postfijaLex.add(';')
+                postfijaTokens.append(';')
+                postfijaLex.append(';')
 
         # Si es operador
         elif esOperador(token):
-            while (len(pilaTok)) and (pilaTok[-1]=='>=' ):
+            while (len(pilaTok) != 0) and (precedenciaMayorIgual(pilaTok[-1], token)):
                 temp1 = pilaTok.pop()
                 temp2 = pilaLex.pop()
-                postfijaTokens.add(temp1)
-                postfijaLex.add(temp2)
-            pilaTok.add(token)
-            pilaLex.add(globalLex[i])
-        # Si es llave
+                postfijaTokens.append(temp1)
+                postfijaLex.append(temp2)
+            pilaTok.append(token)
+            pilaLex.append(globalLex[i])
+        
+        # Si es punto y coma
         elif token ==';':
             while (len(pilaTok) != 0) and (pilaTok[-1] != '{'):
                 temp1= pilaTok.pop()
-                temp2= pilaTok.pop()
-                postfijaTokens.add(temp1)
-                postfijaLex.add(temp2)
-            postfijaTokens.add(token)
-            postfijaLex.add(globalLex)
-        elif token =='(':
-            pilaTok.add(token)
-            pilaLex.add(globalLex[i])
+                temp2= pilaLex.pop()
+                postfijaTokens.append(temp1)
+                postfijaLex.append(temp2)
+            postfijaTokens.append(token)
+            postfijaLex.append(globalLex[i])
+        
+        # Si es llave que abre
+        elif token =='{':
+            pilaTok.append(token)
+            pilaLex.append(globalLex[i])
+
+        # Si es llave que cierra
         elif token == '}' and estructControl:
             if (globalTokens[i + 1]== 'ELSE'):
                 pilaTok.pop()
                 pilaLex.pop()
             else:
+                
                 pilaTok.pop()
                 pilaLex.pop()
-                postfijaTokens.add(token==';')
-                postfijaLex.add(token==';')
-                tokenaux=estructControlPila.pop()
-            if (tokenaux=='ELSE'):
-                estructControlPila.pop()
-                postfijaLex.add(token==';')
-                postfijaTokens.add(token==';')
-            if estructControlPila.isEmpty():
-                estructControl=False
-            
-        
-    
+                postfijaTokens.append(';')
+                postfijaLex.append(';')
+                tokenaux = estructControlPila.pop()
+                if (tokenaux=='ELSE'):
+                    estructControlPila.pop()
+                    postfijaLex.append(';')
+                    postfijaTokens.append(';')
+                if len(estructControlPila) == 0:
+                    estructControl=False  
+    # Si la pila no esta vacía
     while(len(pilaTok) != 0):
-        temp1=pilaTok.pop
-        temp2=pilaTok.pop
-        postfijaLex.add(temp1)
-        postfijaTokens.add(temp2)
-    while(len(estructControl))
-        estructControl=False
-        estructControlPila=False
-                
+        temp1=pilaTok.pop()
+        temp2=pilaLex.pop()
+        postfijaTokens.append(temp1)
+        postfijaLex.append(temp2)
+    # Si la pila estruct no esta vacía
+    while(len(estructControlPila) != 0):
+        estructControlPila.pop()
+        postfijaTokens.append(';')
+        postfijaLex.append(';')
+            
+    return postfijaTokens, postfijaLex
 
-
-    
-    
-    print(postfijaLex)
-    print("\n" + postfijaTokens)
-
-    return True
 
 
 
@@ -1088,9 +1233,12 @@ def lexico(cadena):
     globalLex, globalLin = separador(cad)
     global globalTokens 
     globalTokens = PalRe(globalLex)
-
     program()
-    GenePost()
+    postfijaTokens, postfijaLex = GenePost()
+
+    generadorAST(postfijaTokens, postfijaLex)
+    print(postfijaTokens)
+    print(postfijaLex)
 
 
     
