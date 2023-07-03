@@ -21,7 +21,7 @@ def program():
     global indicador
     declaration()
     if globalTokens[indicador] == 'EOF':
-        print("La cadena fue valida")
+        pass
     else:
         error()
 
@@ -927,32 +927,124 @@ def remove(cadena):
 #####                         #####
 ###################################
 
+#Solver Aritmetico
+def resolver(n):    
+    if len(n.get_hijos()) == 0:
+        if n.get_token() == 'NUMERO':
+            return float(n.get_lex())
+        if n.get_token() == 'STRING':
+            return str(n.get_lex())
+        elif n.get_token() == 'ID':
+            return obtenerValor(n.get_lex())
+
+    izq = n.get_hijos()[0]
+    der = n.get_hijos()[1]
+
+    resultado_izquierdo = resolver(izq)
+    resultado_derecho = resolver(der)
+
+    if isinstance(resultado_izquierdo, float) and isinstance(resultado_derecho, float):
+        if n.get_token() == '+':
+            return resultado_izquierdo + resultado_derecho
+        elif n.get_token() == '-':
+            return resultado_izquierdo - resultado_derecho
+        elif n.get_token() == '*':
+            return resultado_izquierdo * resultado_derecho
+        elif n.get_token() == '/':
+            return resultado_izquierdo / resultado_derecho
+    elif isinstance(resultado_izquierdo, str) and isinstance(resultado_derecho, str):
+        if n.get_token() == '+':
+            return resultado_izquierdo + resultado_derecho
+        else:
+            print("No se esperaba el operador '" + n.get_token() + "' en la concatenación")
+            sys.exit(1)
+            
+    else:
+        print("Error de concatenación entre " + str(resultado_izquierdo) + " y '" + str(resultado_derecho) + "'")
+        sys.exit(1)
+
+    return None
+
+
+# Solver comparativo
+def comparativo(n):
+    if len(n.get_hijos()) == 0:
+        if n.get_token() == 'NUMERO':
+            return float(n.get_lex())
+        if n.get_token() == 'STRING':
+            print("Error semántico. No se esperaba un STRING en la comparación")
+            sys.exit(1)
+        elif n.get_token() == 'ID':
+            return obtenerValor(n.get_lex())
+        
+    izq = n.get_hijos()[0]
+    der = n.get_hijos()[1]
+    
+    resultado_izquierdo = resolver(izq)
+    resultado_derecho = resolver(der)
+
+    if isinstance(resultado_izquierdo, float) and isinstance(resultado_derecho, float):
+        if n.get_token() == '+':
+            return resultado_izquierdo + resultado_derecho
+        elif n.get_token() == '-':
+            return resultado_izquierdo - resultado_derecho
+        elif n.get_token() == '*':
+            return resultado_izquierdo * resultado_derecho
+        elif n.get_token() == '/':
+            return resultado_izquierdo / resultado_derecho   
+    else:
+        print("Error de concatenación entre " + str(resultado_izquierdo) + " y '" + str(resultado_derecho) + "'")
+        sys.exit(1)
+
+    pass
+
+
+# Tabla de Símbolos
+tablaSimbolos = {}
+def insertaValor(ID, value):
+    global tablaSimbolos
+    tablaSimbolos[ID] = value
+def existeVariable(ID):
+    global tablaSimbolos
+    if ID in tablaSimbolos:
+        return True
+    else:
+        return False
+def obtenerValor(ID):
+    global tablaSimbolos
+    if ID in tablaSimbolos:
+        return tablaSimbolos[ID]
+    else:
+        print("Error semantico, no se declaro la variable '" + ID + "'") 
+        sys.exit(1)
+
+
 # Resolver Árbol
 def recorrer(padre):
     for n in padre.get_hijos():
         t = n.get_token()
-        print(t)
-        if t == "+" or t == '-' or t == '*' or t == '/':
-            #solver = SolverAritmetico(n)
-            #res = solver.resolver()
-            #print(res)
+        if t == "+" or t == '-' or t == '*' or t == '/': #Listo
             pass
         elif t == 'VAR':
-            # Crear una variable. Usar tabla de símbolos
-            pass
+            hijo = n.get_hijos()[0]
+            if len(n.get_hijos()) == 1:
+                insertaValor(hijo.get_lex(), None)
+            elif(len(n.get_hijos()) == 2):
+                hijo2 = n.get_hijos()[1]
+                insertaValor(hijo.get_lex(), resolver(hijo2))
+
         elif t == 'IF':
-            for n2 in n.get_hijos():
-                print(n2.get_token(), end=' ')
-                
+            pass
         elif t == 'ELSE':
             pass
-        elif t == 'PRINT':
-            for n2 in n.get_hijos():
-                print(n2.get_token(), end=' ')
+        elif t == 'PRINT': #Listo
+            print(resolver(n.get_hijos()[0]))
         elif t == 'WHILE':
             pass
         elif t == 'FOR':
             pass
+        elif t == '=':
+            print("Hola")
 
 
 # Clase Nodo
@@ -990,8 +1082,6 @@ class Nodo:
     def get_hijos(self):
         return self.hijos
  
-
-
 
 # Generador AST
 def generadorAST(tokens, lexico):
@@ -1053,8 +1143,6 @@ def generadorAST(tokens, lexico):
     return raiz
     
 
-
-
 # Palabras extra
 def esPalabraReservada(cadena):
     palabras = ['VAR', 'IF', 'PRINT', 'ELSE', 'FOR', 'WHILE'] 
@@ -1110,6 +1198,7 @@ def aridad(cadena):
         return 2
     else: 
         return 0
+
 
 # Generación postfija
 def GenePost():
@@ -1219,32 +1308,17 @@ def GenePost():
     return postfijaTokens, postfijaLex
 
 
-
-
-def ansal_sema(codigo):
-    variables = {}  # Diccionario para almacenar las variables y sus estados
-
-    lineas = codigo.split('\n')  # Dividir el código en líneas
-
-    for linea in lineas:
-        if "var" in linea:
-            # Obtener el nombre de la variable
-            nombre_variable = linea.split("var")[1].strip()
-
-            # Verificar si la variable ya ha sido declarada
-            if nombre_variable in variables:
-                print(f"Error semántico: La variable '{nombre_variable}' ya ha sido declarada")
-            else:
-                # Agregar la variable al diccionario
-                variables[nombre_variable] = True
-
-    print("Análisis semántico completado")
-
 #############################
 ###                       ###
 ###   Función principal   ###
 ###                       ###
 #############################
+
+def strings(tokens, lex):
+    for i in range(len(tokens)):
+        if tokens[i] == 'STRING':
+            lex[i] = convCadena(lex[i])
+    return tokens, lex
 
 def lexico(cadena):
     cad = remove(cadena)
@@ -1254,11 +1328,12 @@ def lexico(cadena):
     globalTokens = PalRe(globalLex)
     program()
     postfijaTokens, postfijaLex = GenePost()
-
+    postfijaTokens, postfijaLex = strings(postfijaTokens, postfijaLex)
     arbol = generadorAST(postfijaTokens, postfijaLex)
-    recorrer(arbol)
+    
     print(postfijaTokens)
     print(postfijaLex)
+    recorrer(arbol)
 
 
     

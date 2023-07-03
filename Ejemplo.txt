@@ -1,1 +1,5 @@
-print nombre + " " + apellido;
+if (a > b){
+    print "hola";
+}else{
+    print "Huevos";
+}
