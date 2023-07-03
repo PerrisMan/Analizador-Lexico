@@ -1051,7 +1051,9 @@ def recorrer(padre):
         elif t == 'PRINT': #Listo
             print(resolver(n.get_hijos()[0]))
         elif t == 'WHILE':
-            pass
+            hijo = n.get_hijos()[0]
+            while comparativo(hijo):
+                recorrer(n)
         elif t == 'FOR':
             pass
         elif t == '=':

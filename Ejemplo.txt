@@ -1,10 +1,16 @@
-var radio = 5;
-var pi = 3.1416;
-var area = pi*radio *radio;
+/*
+Código para calcula la serie de Fibonacci
+*/
+var fib = 0;
+var lim = 10;
+var aux = 1;
+var init = 1;
 
-if(area > 100 and radio<10){
-    print "Condicion valida";
+while(init <= lim){
+    print fib;
+    aux = aux + fib;
+    fib = aux - fib;
+    init = init + 1;
 }
-else{
-    print "No se cumple el criterio";
-}
+
+print "Fin";
