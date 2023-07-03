@@ -866,7 +866,7 @@ def separador(cadena):
         if tokens[i]=='\t':
             cont+=1
     for j in range(cont):
-        tokens.remove(' \t')
+        tokens.remove('\t')
     
     #Elimina saltos de linea
     cont=0
@@ -972,31 +972,37 @@ def comparativo(n):
         if n.get_token() == 'NUMERO':
             return float(n.get_lex())
         if n.get_token() == 'STRING':
-            print("Error semántico. No se esperaba un STRING en la comparación")
-            sys.exit(1)
+            return str(n.get_lex())
         elif n.get_token() == 'ID':
-            return obtenerValor(n.get_lex())
+            return obtenerValor(n.get_lex()) 
         
     izq = n.get_hijos()[0]
     der = n.get_hijos()[1]
     
-    resultado_izquierdo = resolver(izq)
-    resultado_derecho = resolver(der)
-
+    resultado_izquierdo = comparativo(izq)
+    resultado_derecho = comparativo(der)
+    
     if isinstance(resultado_izquierdo, float) and isinstance(resultado_derecho, float):
-        if n.get_token() == '+':
-            return resultado_izquierdo + resultado_derecho
-        elif n.get_token() == '-':
-            return resultado_izquierdo - resultado_derecho
-        elif n.get_token() == '*':
-            return resultado_izquierdo * resultado_derecho
-        elif n.get_token() == '/':
-            return resultado_izquierdo / resultado_derecho   
+        if n.get_token() == '>':
+            return resultado_izquierdo > resultado_derecho
+        elif n.get_token() == '>=':
+            return resultado_izquierdo >= resultado_derecho
+        elif n.get_token() == '<':
+            return resultado_izquierdo < resultado_derecho
+        elif n.get_token() == '<=':
+            return resultado_izquierdo <= resultado_derecho
+        elif n.get_token() == '==':
+            return resultado_izquierdo == resultado_derecho
+        elif n.get_token() == '!=':
+            return resultado_izquierdo != resultado_derecho 
+    elif isinstance(resultado_izquierdo, bool) and isinstance(resultado_derecho, bool):
+        if n.get_token() == 'OR':
+            return resultado_izquierdo or resultado_derecho
+        elif n.get_token() == 'AND':
+            return resultado_izquierdo and resultado_derecho 
     else:
-        print("Error de concatenación entre " + str(resultado_izquierdo) + " y '" + str(resultado_derecho) + "'")
+        print("Error de comparación entre '" + str(resultado_izquierdo) + "' y '" + str(resultado_derecho) + "'")
         sys.exit(1)
-
-    pass
 
 
 # Tabla de Símbolos
@@ -1027,16 +1033,21 @@ def recorrer(padre):
             pass
         elif t == 'VAR':
             hijo = n.get_hijos()[0]
-            if len(n.get_hijos()) == 1:
+            if existeVariable(hijo.get_lex()):
+                    print("La variable '" + hijo.get_lex() + "' ya a sido declarada")
+                    sys.exit(1)
+            elif len(n.get_hijos()) == 1:
                 insertaValor(hijo.get_lex(), None)
             elif(len(n.get_hijos()) == 2):
                 hijo2 = n.get_hijos()[1]
                 insertaValor(hijo.get_lex(), resolver(hijo2))
-
         elif t == 'IF':
-            pass
-        elif t == 'ELSE':
-            pass
+            hijo = n.get_hijos()[0]
+            hijos = n.get_hijos()
+            if comparativo(hijo):
+                recorrer(n)
+            elif hijos[-1].get_token() == 'ELSE':
+                recorrer(hijos[-1])
         elif t == 'PRINT': #Listo
             print(resolver(n.get_hijos()[0]))
         elif t == 'WHILE':
@@ -1044,7 +1055,14 @@ def recorrer(padre):
         elif t == 'FOR':
             pass
         elif t == '=':
-            print("Hola")
+            hijo1 = n.get_hijos()[0]
+            hijo2 = n.get_hijos()[1]
+            if existeVariable(hijo1.get_lex()):
+                insertaValor(hijo1.get_lex(), resolver(hijo2))
+            else:
+                print("La variable '" + hijo.get_lex() + "' no se ha declarado")
+                sys.exit()
+            
 
 
 # Clase Nodo
@@ -1085,10 +1103,9 @@ class Nodo:
 
 # Generador AST
 def generadorAST(tokens, lexico):
-    global raiz
     raiz = Nodo(None, None)
     pilaPadres = [raiz]
-    pila = [raiz]
+    pila = []
 
     padre = raiz
 
@@ -1121,7 +1138,7 @@ def generadorAST(tokens, lexico):
             pila.append(n)
 
         elif t == ';':
-            if len(pila) == 1:
+            if len(pila) == 0:
                 pilaPadres.pop()
                 padre = pilaPadres[-1]
             else:
@@ -1183,7 +1200,7 @@ def obtenerPrecedencia(cadena):
     elif cadena == '>' or cadena == '>=' or cadena == '<' or cadena == '<=':
         return 5
     elif cadena == '!=' or cadena == '==':
-        return 1
+        return 4
     elif cadena == 'AND':
         return 3
     elif cadena == 'OR':
@@ -1193,7 +1210,7 @@ def obtenerPrecedencia(cadena):
     return 0
 
 def aridad(cadena):
-    palabras = ['+', '-', '*', '/', '=', '>', '>=', '<', '<=', '==', '!=']
+    palabras = ['+', '-', '*', '/', '=', '>', '>=', '<', '<=', '==', '!=', 'AND', 'OR']
     if cadena in palabras:
         return 2
     else: 
@@ -1331,8 +1348,8 @@ def lexico(cadena):
     postfijaTokens, postfijaLex = strings(postfijaTokens, postfijaLex)
     arbol = generadorAST(postfijaTokens, postfijaLex)
     
-    print(postfijaTokens)
-    print(postfijaLex)
+    #print(postfijaTokens)
+    #print(postfijaLex)
     recorrer(arbol)
 
 

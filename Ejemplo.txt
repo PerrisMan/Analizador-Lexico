@@ -1,5 +1,10 @@
-if (a > b){
-    print "hola";
-}else{
-    print "como estas";
+var radio = 5;
+var pi = 3.1416;
+var area = pi*radio *radio;
+
+if(area > 100 and radio<10){
+    print "Condicion valida";
+}
+else{
+    print "No se cumple el criterio";
 }
