@@ -1,4 +1,6 @@
 var nombre = "Gabriel";
 var apellido = "Rodriguez";
+var junto;
+junto = nombre + " " + apellido;
 
-print nombre + " " + apellido;
+print junto;

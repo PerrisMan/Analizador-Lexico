@@ -1025,6 +1025,21 @@ def obtenerValor(ID):
         sys.exit(1)
 
 
+#Para variable
+def generaVar(padre):
+    t = padre.get_token()
+    if t == 'VAR':
+        hijo = padre.get_hijos()[0]
+        if existeVariable(hijo.get_lex()):
+                print("La variable '" + hijo.get_lex() + "' ya a sido declarada")
+                sys.exit(1)
+        elif len(padre.get_hijos()) == 1:
+            insertaValor(hijo.get_lex(), None)
+        elif(len(padre.get_hijos()) == 2):
+            hijo2 = padre.get_hijos()[1]
+            insertaValor(hijo.get_lex(), resolver(hijo2))
+
+
 # Resolver Árbol
 def recorrer(padre):
     for n in padre.get_hijos():
@@ -1055,7 +1070,13 @@ def recorrer(padre):
             while comparativo(hijo):
                 recorrer(n)
         elif t == 'FOR':
-            pass
+            auxn = n
+            auxhijo = auxn.quitarHijo(0)
+            generaVar(auxhijo)
+            auxhijo = auxn.quitarHijo(1)
+            auxn.insertar_siguiente_hijo(auxhijo)
+            while comparativo(auxn.get_hijos()[0]):
+                recorrer(n)
         elif t == '=':
             hijo1 = n.get_hijos()[0]
             hijo2 = n.get_hijos()[1]
@@ -1092,6 +1113,9 @@ class Nodo:
                 self.hijos = [n]
             else:
                 self.hijos.append(n)
+    
+    def quitarHijo(self, num):
+        return self.hijos.pop(num)
 
     def get_token(self):
         return self.tokens
@@ -1281,7 +1305,7 @@ def GenePost():
         
         # Si es punto y coma
         elif token ==';':
-            while (len(pilaTok) != 0) and (pilaTok[-1] != '{'):
+            while (len(pilaTok) != 0) and (pilaTok[-1] != '{') and (pilaTok[-1] != '('):
                 temp1= pilaTok.pop()
                 temp2= pilaLex.pop()
                 postfijaTokens.append(temp1)
