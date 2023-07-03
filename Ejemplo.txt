@@ -1,5 +1,5 @@
 if (a > b){
     print "hola";
 }else{
-    print "Huevos";
+    print "como estas";
 }
