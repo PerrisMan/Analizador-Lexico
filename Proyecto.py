@@ -1070,12 +1070,11 @@ def recorrer(padre):
             while comparativo(hijo):
                 recorrer(n)
         elif t == 'FOR':
-            auxn = n
-            auxhijo = auxn.quitarHijo(0)
+            auxhijo = n.quitarHijo(0)
             generaVar(auxhijo)
-            auxhijo = auxn.quitarHijo(1)
-            auxn.insertar_siguiente_hijo(auxhijo)
-            while comparativo(auxn.get_hijos()[0]):
+            auxhijo = n.quitarHijo(1)
+            n.insertar_siguiente_hijo(auxhijo)
+            while comparativo(n.get_hijos()[0]):
                 recorrer(n)
         elif t == '=':
             hijo1 = n.get_hijos()[0]
